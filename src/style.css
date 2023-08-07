@@ -1,17 +1,35 @@
+body{
+  margin: 0;
+  padding: 0;
+}
 .gallery {
+  
     display: flex;
+    
+    gap: 34px;
     flex-wrap: wrap;     
     justify-content: center;    
     list-style: none;
+    margin: 30px auto;
   }
-   
+.photo-card{
+  display: flex;
+  flex-direction: column;
+}
+
+.info{
+  display: flex;
+  text-align: center;
+  gap: 15px;
+  justify-content: center;
+}
   .gallery__image:hover {
     transform: scale(1.03);
   }
   
   .gallery__image {
     height: 100%;
-    width: 100%;
+    width: 300px;
     object-fit: cover;
     transition: transform var(--animation-duration) var(--timing-function);
   }
@@ -26,4 +44,13 @@
     cursor: zoom-in;
   }
 
- 
+.container{
+  background-color: blue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+.search-form{
+  padding: 20px;
+}
