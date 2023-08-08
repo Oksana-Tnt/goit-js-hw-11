@@ -9,11 +9,24 @@ const galleryEl = document.querySelector(".gallery");
 const buttonEl = document.querySelector(".js-load");
 const target = document.querySelector(".js-guard");
 
+
 let currentPage =1;
 let searchQuery = "";
-let counter = 0;
+let total=0;
 
 formEl.addEventListener("submit", onSearch);
+formEl.addEventListener("change", onChange);
+
+function onChange(){
+return  searchQuery = formEl.elements.searchQuery.value;
+ 
+}
+
+function createNewGallery() {
+  galleryEl.innerHTML = "";
+  total = 0;
+  currentPage = 1;
+}
 
 let options = {
   root : null,
@@ -21,10 +34,33 @@ let options = {
   treshold: 1.0,
 };
 
-let observer = new IntersectionObserver (onLoad, options);
+let observer = new IntersectionObserver(onLoad, options);
 
-function onLoad(enries, observer){
-  let totalHint=0;
+function onSearch(evt) {   
+  evt.preventDefault();
+  createNewGallery();
+   
+      fetchGalleryPhoto(searchQuery, currentPage)
+
+      .then(data => {  
+            
+      console.log(data.data);
+      galleryEl.insertAdjacentHTML("beforeend", createMarkup(data.data.hits));      
+     
+      createSimpleLightbox();
+      observer.observe(target);
+        
+    })
+
+    .catch(err => Notiflix.Report.failure('Error', 'Sorry, there are no images matching your search query. Please try again', 'Ok'));   
+    
+  
+};
+
+
+
+function onLoad(enries, observer) {
+     
 
   enries.forEach((entry) =>{
     if(entry.isIntersecting){      
@@ -33,17 +69,26 @@ function onLoad(enries, observer){
     fetchGalleryPhoto(searchQuery, currentPage)
     .then(data => {   
 
-      totalHint+=data.data.hits.length
-      Notiflix.Notify.success(`Hooray! We found more ${totalHint} images for you!`);
-     
-        galleryEl.insertAdjacentHTML("beforeend", createMarkup(data.data.hits));
-        let lighbox = new SimpleLightbox('.gallery a', { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});
+      total += data.data.hits.length;
+      Notiflix.Notify.success(`Hooray! We found more ${total} images for you!`);
+      
+      galleryEl.insertAdjacentHTML("beforeend", createMarkup(data.data.hits));
+       
+      createSimpleLightbox();
 
-        if(totalHint === data.data.totalHint){          
+      const { height: cardHeight } = galleryEl.firstElementChild.getBoundingClientRect();
+
+      window.scrollBy({
+      top: cardHeight * 2,
+      behavior: "smooth",
+});
+
+
+        if(total === data.data.totalHits){          
             Notiflix.Report.warning("We're sorry, but you've reached the end of search results");
             observer.unobserve(target);
         }
-       
+        console.log(data.data);
     })
 
     .catch(err => Notiflix.Report.failure('Error', 'Sorry, there are no images matching your search query. Please try again', 'Ok'));   
@@ -52,25 +97,7 @@ function onLoad(enries, observer){
   })
 };
 
-function onSearch(evt){
-
-    evt.preventDefault();
-    
-    searchQuery = (formEl.elements.searchQuery.value).trim().toLowerCase();
-
-    fetchGalleryPhoto(searchQuery, currentPage)
-
-    .then(data => {     
-      console.log(data.data);
-        galleryEl.insertAdjacentHTML("beforeend", createMarkup(data.data.hits));
-        let lighbox = new SimpleLightbox('.gallery a', { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});
-
-        observer.observe(target);
-        
-    })
-
-    .catch(err => Notiflix.Report.failure('Error', 'Sorry, there are no images matching your search query. Please try again', 'Ok'));   
-    
-};
-
-
+function createSimpleLightbox() {
+  let lighbox = new SimpleLightbox('.gallery a', { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});
+  lighbox.refresh();
+}
