@@ -28,8 +28,8 @@ function createMarkup(arr) {
       </p>
       
     </div>
-    </div>`).join(""); 
-  
+    </div>`).join("");   
+
 };
 
 export {createMarkup};

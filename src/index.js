@@ -6,7 +6,8 @@ import { createMarkup } from "./templates/pixabay-markup.js";
 
 const formEl=document.querySelector(".search-form");
 const galleryEl = document.querySelector(".gallery");
-const buttonEl = document.querySelector(".js-load");
+const spanEl = document.querySelector(".js-span");
+
 const target = document.querySelector(".js-guard");
 
 
@@ -18,14 +19,14 @@ formEl.addEventListener("submit", onSearch);
 formEl.addEventListener("change", onChange);
 
 function onChange(){
-return  searchQuery = formEl.elements.searchQuery.value;
- 
+return  searchQuery = formEl.elements.searchQuery.value; 
 }
 
-function createNewGallery() {
+function clearGallery() {
   galleryEl.innerHTML = "";
   total = 0;
   currentPage = 1;
+  // spanEl.textContent = "";
 }
 
 let options = {
@@ -35,69 +36,62 @@ let options = {
 };
 
 let observer = new IntersectionObserver(onLoad, options);
+lightbox =  new SimpleLightbox('.gallery a', { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});
 
 function onSearch(evt) {   
+
   evt.preventDefault();
-  createNewGallery();
-   
-      fetchGalleryPhoto(searchQuery, currentPage)
 
-      .then(data => {  
-            
-      console.log(data.data);
-      galleryEl.insertAdjacentHTML("beforeend", createMarkup(data.data.hits));      
-     
-      createSimpleLightbox();
-      observer.observe(target);
-        
-    })
+  clearGallery();
 
-    .catch(err => Notiflix.Report.failure('Error', 'Sorry, there are no images matching your search query. Please try again', 'Ok'));   
-    
-  
-};
+  getPhotoGallery();
+
+  lightbox.refresh();
+
+  observer.observe(target);
 
 
-
-function onLoad(enries, observer) {
-     
-
-  enries.forEach((entry) =>{
-    if(entry.isIntersecting){      
-      currentPage +=1;
-
-    fetchGalleryPhoto(searchQuery, currentPage)
-    .then(data => {   
-
-      total += data.data.hits.length;
-      Notiflix.Notify.success(`Hooray! We found more ${total} images for you!`);
       
-      galleryEl.insertAdjacentHTML("beforeend", createMarkup(data.data.hits));
-       
-      createSimpleLightbox();
-
-      const { height: cardHeight } = galleryEl.firstElementChild.getBoundingClientRect();
-
-      window.scrollBy({
-      top: cardHeight * 2,
-      behavior: "smooth",
-});
-
-
-        if(total === data.data.totalHits){          
-            Notiflix.Report.warning("We're sorry, but you've reached the end of search results");
-            observer.unobserve(target);
-        }
-        console.log(data.data);
-    })
-
-    .catch(err => Notiflix.Report.failure('Error', 'Sorry, there are no images matching your search query. Please try again', 'Ok'));   
-    }
-    
-  })
 };
 
-function createSimpleLightbox() {
-  let lighbox = new SimpleLightbox('.gallery a', { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});
-  lighbox.refresh();
+
+function onLoad(enries, observer) { 
+
+   enries.forEach((entry) =>{
+    if(entry.isIntersecting){      
+     getPhotoGallery();
+             
+    }
+
+  });
+};
+
+function addMarkup(element, markup){
+  element.insertAdjacentHTML("beforeend", markup); 
+
 }
+
+function getPhotoGallery(){
+
+  fetchGalleryPhoto(searchQuery, currentPage)
+
+      .then(data => {              
+        total += data.data.hits.length;
+        currentPage +=1;    
+    
+      addMarkup(galleryEl, createMarkup(data.data.hits));  
+      lightbox.refresh(); 
+
+
+      if(total === data.data.totalHits){    
+      
+        observer.unobserve(target);
+
+        Notiflix.Report.warning("We're sorry, but you've reached the end of search results");
+        return;
+      }
+                 
+    })
+    .catch(err => Notiflix.Report.failure('Error', 'Sorry, there are no images matching your search query. Please try again', 'Ok'));       
+
+};
