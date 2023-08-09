@@ -35,7 +35,7 @@ let options = {
 };
 
 let observer = new IntersectionObserver(onLoad, options);
-lightbox =  new SimpleLightbox(".gallery a", { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});
+let lightbox =  new SimpleLightbox(".gallery a", { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});
 
 function onSearch(evt) {   
 
@@ -54,15 +54,13 @@ function onLoad(enries, observer) {
 
    enries.forEach((entry) =>{
     if(entry.isIntersecting){      
-     getPhotoGallery();
-             
+     getPhotoGallery();             
     }
   });
 };
 
 async function getPhotoGallery(){
-  
- 
+   
   await fetchGalleryPhoto(searchQuery, currentPage)
 
     .then(data => { 
