@@ -39,7 +39,7 @@ let observer = new IntersectionObserver(onLoad, options);
    
 
 function onSearch(evt) {   
-lightbox = new SimpleLightbox(".gallery a", { captionsData: "alt", captionDelay: 250, captionPosition: "bottom" });
+
   evt.preventDefault();
 
   clearGallery();
@@ -58,7 +58,7 @@ function onLoad(enries, observer) {
      if (entry.isIntersecting) {  
        
        getPhotoGallery();  
-       
+       lightbox = new SimpleLightbox(".gallery a", { captionsData: "alt", captionDelay: 250, captionPosition: "bottom" });
        lightbox.refresh(); 
        
     }
