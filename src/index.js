@@ -52,7 +52,7 @@ function onSearch(evt) {
 
 
 function onLoad(enries, observer) {
- 
+
   enries.forEach((entry) => {
      
      if (entry.isIntersecting) {  
