@@ -52,7 +52,7 @@ function onSearch(evt) {
 
 
 function onLoad(enries, observer) {
- Notiflix.Notify.success(`we're found enouger ${data.data.hits.length} for your`);
+ 
   enries.forEach((entry) => {
      
      if (entry.isIntersecting) {  
