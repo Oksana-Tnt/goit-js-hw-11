@@ -58,3 +58,14 @@ body {
 .search-form {
   padding: 20px;
 }
+
+
+.js-span {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+  font-size: 20px;
+  font-weight: 600;
+  color: red;
+  text-align: center;
+}
