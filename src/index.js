@@ -36,7 +36,6 @@ let options = {
 
 let observer = new IntersectionObserver(onLoad, options);
 
-
 function onSearch(evt) {   
 
   evt.preventDefault();
@@ -44,53 +43,53 @@ function onSearch(evt) {
   clearGallery();
  
   observer.observe(target); 
-
-  // let lightbox =  new SimpleLightbox(".gallery a", { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});   
-     
-  // lightbox.refresh();
   
-     
 };
-
 
 function onLoad(enries, observer) {
 
    enries.forEach((entry) =>{
     if(entry.isIntersecting){         
 
-     getPhotoGallery();  
-     
+      getPhotoGallery();  
      
     }
   });
+
+  
 };
 
 async function getPhotoGallery(){
-    let lightbox =  new SimpleLightbox(".gallery a", { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});   
+   
+    
   await fetchGalleryPhoto(searchQuery, currentPage)
-
-    .then(data => { 
-      lightbox.refresh();
-      total += data.data.hits.length;
-        
-      currentPage += 1;    
-          
+ 
+    .then(data => {               
+      
+      if(currentPage===1){
+        Notiflix.Notify.success(`Hooray! We found ${data.data.totalHits} images.`);
+      }          
+      
       if(currentPage === Math.floor(data.data.totalHits/Per_Page) || (data.data.hits.length < 40)){   
                
         observer.unobserve(target);
 
-        spanEl.textContent = "We're sorry, but you've reached the end of search results";
-        
-        return;
+        spanEl.textContent = "We're sorry, but you've reached the end of search results";        
+ 
       }
+
+      currentPage += 1;   
         
       addMarkup(galleryEl, createMarkup(data.data.hits));    
-          
-     lightbox.refresh();
+      let lightbox =  new SimpleLightbox(".gallery a", { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});          
        
     })
 
-    .catch(err => Notiflix.Report.failure('Error', 'Sorry, there are no images matching your search query. Please try again', 'Ok'));       
+    .catch(err => Notiflix.Report.failure('Error', 'Sorry, there are no images matching your search query. Please try again', 'Ok'))
+
+    .finally(lightbox.refresh());     
+    
+   
 };
 
 function addMarkup(element, markup) {
