@@ -36,7 +36,7 @@ let options = {
 };
 
 let observer = new IntersectionObserver(onLoad, options);
-lightbox =  new SimpleLightbox('.gallery a', { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});
+lightbox =  new SimpleLightbox(".gallery a", { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});
 
 function onSearch(evt) {   
 
