@@ -35,7 +35,7 @@ let options = {
 };
 
 let observer = new IntersectionObserver(onLoad, options);
-let lightbox =  new SimpleLightbox(".gallery a", { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});
+
 
 function onSearch(evt) {   
 
@@ -45,7 +45,10 @@ function onSearch(evt) {
  
   observer.observe(target); 
 
-  lightbox.refresh();
+  // let lightbox =  new SimpleLightbox(".gallery a", { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});   
+     
+  // lightbox.refresh();
+  
      
 };
 
@@ -53,23 +56,25 @@ function onSearch(evt) {
 function onLoad(enries, observer) {
 
    enries.forEach((entry) =>{
-    if(entry.isIntersecting){      
-     getPhotoGallery();             
+    if(entry.isIntersecting){         
+
+     getPhotoGallery();  
+     
+     
     }
   });
 };
 
 async function getPhotoGallery(){
-   
+    let lightbox =  new SimpleLightbox(".gallery a", { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});   
   await fetchGalleryPhoto(searchQuery, currentPage)
 
     .then(data => { 
-      
+      lightbox.refresh();
       total += data.data.hits.length;
         
       currentPage += 1;    
-    
-      
+          
       if(currentPage === Math.floor(data.data.totalHits/Per_Page) || (data.data.hits.length < 40)){   
                
         observer.unobserve(target);
@@ -79,10 +84,10 @@ async function getPhotoGallery(){
         return;
       }
         
-      addMarkup(galleryEl, createMarkup(data.data.hits));       
-     
-      lightbox.refresh();   
-      
+      addMarkup(galleryEl, createMarkup(data.data.hits));    
+          
+     lightbox.refresh();
+       
     })
 
     .catch(err => Notiflix.Report.failure('Error', 'Sorry, there are no images matching your search query. Please try again', 'Ok'));       
