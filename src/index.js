@@ -60,10 +60,10 @@ function onLoad(enries, observer) {
   });
 };
 
-function getPhotoGallery(){
+async function getPhotoGallery(){
   
  
-  fetchGalleryPhoto(searchQuery, currentPage)
+  await fetchGalleryPhoto(searchQuery, currentPage)
 
     .then(data => { 
       
