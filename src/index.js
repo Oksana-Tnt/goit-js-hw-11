@@ -80,7 +80,8 @@ async function getPhotoGallery(){
 
       currentPage += 1;   
         
-      addMarkup(galleryEl, createMarkup(data.data.hits));    
+      addMarkup(galleryEl, createMarkup(data.data.hits));  
+
       let lightbox =  new SimpleLightbox(".gallery a", { captionsData: "alt" ,captionDelay: 250, captionPosition: "bottom"});          
        
     })
