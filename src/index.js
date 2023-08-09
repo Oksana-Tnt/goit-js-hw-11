@@ -36,7 +36,7 @@ let options = {
 
 let observer = new IntersectionObserver(onLoad, options);
 lightbox = new SimpleLightbox('.gallery a', { captionsData: "alt", captionDelay: 250, captionPosition: "bottom" });
- 
+   
 
 function onSearch(evt) {   
 
@@ -47,16 +47,16 @@ function onSearch(evt) {
   observer.observe(target); 
 
   lightbox.refresh();
-    
+     
 };
 
 
 function onLoad(enries, observer) {
-
+ Notiflix.Notify.success(`we're found enouger ${data.data.hits.length} for your`);
   enries.forEach((entry) => {
      
      if (entry.isIntersecting) {  
-      
+       
        getPhotoGallery();  
        
        lightbox.refresh(); 
@@ -71,24 +71,27 @@ function getPhotoGallery(){
   fetchGalleryPhoto(searchQuery, currentPage)
 
     .then(data => { 
-        
+      
       total += data.data.hits.length;
-      
-      currentPage += 1;    
-      
-      if(currentPage === Math.floor(data.data.totalHits/Per_Page)){    
         
+      currentPage += 1;    
+    
+      
+      if(currentPage === Math.floor(data.data.totalHits/Per_Page) || (data.data.hits.length < 40)){   
+               
         observer.unobserve(target);
 
-        spanEl.textContent= "We're sorry, but you've reached the end of search results";
-        return;
-        }
+        spanEl.textContent = "We're sorry, but you've reached the end of search results";
         
-      addMarkup(galleryEl, createMarkup(data.data.hits));  
+        return;
+      }
+        
+      addMarkup(galleryEl, createMarkup(data.data.hits));       
+     
+      lightbox.refresh();   
       
-      lightbox.refresh(); 
-                 
     })
+
     .catch(err => Notiflix.Report.failure('Error', 'Sorry, there are no images matching your search query. Please try again', 'Ok'));       
 };
 
